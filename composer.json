@@ -1,0 +1,17 @@
+{
+    "name": "zelnaradev/universe",
+    "description": "helper secara umum by chatomz",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "chatomzcoding",
+            "email": "coding.chatomz@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4" : {"zelnaradev\\universe\\" : "src/"}
+    },
+    "require": {}
+}
