@@ -2,8 +2,8 @@
 namespace zelnaradev\universe;
 
 class Universal {
-    public function hallo()
+    public static function hallo()
     {
-        return "Hallo, terima kasih sudah menggunakan library ini?";
+        return "Hallo, terima kasih sudah menggunakan library ini? ini update yang kedua";
     }
 }
