@@ -1,6 +1,8 @@
 <?php
 namespace zelnaradev\universe;
 
+use DateTime;
+
 class Universal {
     // HELPER BILANGAN
     // Mata Uang
@@ -119,5 +121,163 @@ class Universal {
         }
 
         return trim($kalimat);
+    }
+
+    // HELPER WAKTU
+    public static function list_hari($style=NULL)
+    {
+        switch ($style) {
+            case 'EN':
+                $list 		= ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                break;
+            
+            default:
+                // default ke list bulan dalam bahasa indonesia
+                $list 		= ['minggu','senin','selasa','rabu','kamis','jumat','sabtu'];
+                break;
+        }
+        return $list;
+    }
+    public static function list_bulan($style=NULL,$index=NULL)
+    {
+        switch ($style) {
+            case 'EN':
+                $list 		= [	
+                    '01' => 'january',
+                    '02' => 'february',
+                    '03' => 'march',
+                    '04' => 'april',
+                    '05' => 'may',
+                    '06' => 'juny',
+                    '07' => 'july',
+                    '08' => 'august',
+                    '09' => 'september',
+                    '10' => 'oktober',
+                    '11' => 'november',
+                    '12' => 'december'
+                ];
+                break;
+            
+            default:
+                // default ke list bulan dalam bahasa indonesia
+                $list 		= [	
+                    '01' => 'januari',
+                    '02' => 'februari',
+                    '03' => 'maret',
+                    '04' => 'april',
+                    '05' => 'mei',
+                    '06' => 'juni',
+                    '07' => 'juli',
+                    '08' => 'agustus',
+                    '09' => 'september',
+                    '10' => 'oktober',
+                    '11' => 'november',
+                    '12' => 'desember'
+                ];
+                break;
+        }
+        if (!is_null($index)) {
+            return $list[$index];
+        } else {
+            return $list;
+        }
+        
+    }
+    public static function ubah_hari($key,$value,$hari=null)
+    {
+        $key = self::list_hari($key);
+        $value = self::list_hari($value);
+        $result = [];
+        for ($i=0; $i < count($key); $i++) { 
+            $data = [$key[$i] => $value[$i]];
+            $result = array_merge($result,$data);
+        }
+        return $result[strtolower($hari)];
+    }
+    public static function tgl_sekarang() {
+        return date('Y-m-d');
+    }
+    public static function ambil_hari() {
+        return date('l');
+    }
+    public static function ambil_tgl() {
+        return date('d');
+    }
+    public static function ambil_bulan() {
+        return date('m');
+    }
+    public static function ambil_tahun() {
+        return date('Y');
+    }
+    public static function jam_sekarang() {
+        return date('H:i:s');
+    }
+    public static function bulan_indo($m=null)
+    {
+        if (is_null($m)) {
+            $m = self::ambil_bulan();
+        } else {
+            if (strlen($m) == 1)
+                $m = '0'.$m;
+        }
+        return self::list_bulan('ID',$m);
+    }
+    public static function hari_indo($tgl=null)
+    {
+        if (is_null($tgl)) {
+            $tgl = self::tgl_sekarang();
+        }
+        $hari = date('l', strtotime($tgl));
+        return self::ubah_hari('EN','ID',$hari);
+    }
+    public static function tgl_indo($date=null,$info=null)
+    {
+        if (!is_null($date) AND $date <> '0000-00-00') {
+            if ($date == 'hariini') {
+                $date = self::tgl_sekarang();
+            }
+            $tgl			= substr($date, 8,2);
+            $bulan			= substr($date, 5,2);
+            $tahun			= substr($date, 0,4);
+            return $tgl.' '.self::bulan_indo($bulan).' '.$tahun;
+        } else {
+            $notif = 'Parameter tanggal tidak sesuai';
+            if (!is_null($info)) {
+                $notif = $info;
+            }
+            return $notif;
+        }
+    }
+
+    // advance of time
+    public static function selisihwaktu($tanggal)
+    {
+        $tanggal 	    = new Datetime($tanggal);
+        $result = $tanggal->diff(new Datetime());
+        return $result;
+    }
+
+    public static function hitung_hari($tanggal)
+    {
+        $selisih = self::selisihwaktu($tanggal);
+        return $selisih->days;
+    }
+    public function usia($tanggal,$info=FALSE)
+    {
+        $ultah = self::selisihwaktu($tanggal);
+        if ($ultah->m == 0) {
+            $usia = $ultah->d;
+            $notif = "hari";
+        }elseif ($ultah->y == 0) {
+            $usia = $ultah->m;
+            $notif = "bulan";
+        } else {
+            $usia = $ultah->y;
+            $notif = "tahun";
+        }
+        if ($info) {
+            $usia = $usia.' '.$notif;
+        }
+        return $usia;
     }
 }
